@@ -66,22 +66,26 @@
 (define-derived-mode xargs-grep-mode grep-mode "xargs grep mode"
   (setq compilation-disable-input nil))
 
+(defun xargs-grep-read-regexp ()
+  (read-from-minibuffer "Regexp: "
+                        nil nil nil
+                        'xargs-grep-regexp-history
+                        nil))
+(defun xargs-grep-read-file-string ()
+  (read-from-minibuffer
+   (format "Files (\"%s\" path separator): "
+           path-separator)
+   nil nil nil
+   'xargs-grep-files-history
+   nil))
+
 ;;;###autoload
 (defun xargs-grep (grep-regexp files)
   "GREP-REGEXP is the regular expression to be used.
 FILES is a list of files to grep through."
   (interactive (list
-                (read-from-minibuffer "Regexp: "
-                                      nil nil nil
-                                      'xargs-grep-regexp-history
-                                      nil)
-                (split-string (read-from-minibuffer
-                               (format "Files (\"%s\" path separator): "
-                                       path-separator)
-                               nil nil nil
-                               'xargs-grep-files-history
-                               nil)
-                              path-separator)))
+                (xargs-grep-read-regexp)
+                (split-string (xargs-grep-read-file-string) path-separator)))
   (let (out-buf
         xargs-proc
         )
