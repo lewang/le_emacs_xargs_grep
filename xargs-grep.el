@@ -91,10 +91,13 @@ FILES is a list of files to grep through."
         )
     (setq out-buf (compilation-start (concat "xargs -0 grep -EnHe "
                                              grep-regexp) 'xargs-grep-mode))
-    (setq xargs-proc (get-buffer-process out-buf))
     (dolist (f files)
-      (process-send-string xargs-proc (concat f "\0")))
-    (process-send-eof xargs-proc)
+      (process-send-string out-buf (concat f "\0")))
+    (process-send-eof out-buf)
+    ;; on mac os X, need to send eof twice to actually close input pipe.
+    ;; first one prints EOF.
+    (when (get-buffer-process out-buf)
+      (process-send-eof out-buf))
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
