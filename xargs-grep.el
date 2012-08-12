@@ -88,7 +88,8 @@ FILES is a list of files to grep through."
                 (split-string (xargs-grep-read-file-string) path-separator)))
   (let (out-buf
         xargs-proc
-        )
+        ;; http://lists.gnu.org/archive/html/emacs-devel/2012-06/msg00359.html
+        (process-connection-type nil))
     (setq out-buf (compilation-start (concat "xargs -0 grep -EnHe "
                                              grep-regexp) 'xargs-grep-mode))
     (dolist (f files)
